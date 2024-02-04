@@ -89,6 +89,10 @@ public class GameManager : MonoBehaviour
             _gameOverPanel.SetActive(false);
         }
         _ballCounter = GetComponent<BallCounter>();
+        if (_ballCounter != null)
+        {
+            Debug.Log("カウンターゲット");
+        }
     }
 
     void Update()
@@ -152,7 +156,7 @@ public class GameManager : MonoBehaviour
                     ShowTimer(timerText);
                     Debug.Log(_gameTimer);
                 }
-
+                _ballCounter.Refresh(_life);    // 残機表示★
                 if (Input.GetKeyDown(KeyCode.R))
                 {
                     _started = false;   // ボールを動かす前にポーズをした時用
@@ -214,11 +218,14 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.GameOver:
+                _gameOverPanel.SetActive(true);
                 _setting = false;
+                _canControll = false;   // リフレクター操作できない
                 break;
 
             case GameState.GameClear:
                 _setting = false;
+                _canControll = false;   // リフレクター操作できない
                 break;
         }
 
@@ -252,13 +259,13 @@ public class GameManager : MonoBehaviour
                 // 残機がなければゲームオーバーを表示する
                 if (_gameOverPanel != null && _life < 1 && currentGameState == GameState.Play)
                 {
-                    _gameOverPanel.SetActive(true);
-                    _canControll = false;   // リフレクター操作できない
                     currentGameState = GameState.GameOver;
                     Debug.Log("GameOver");
                 }
                 else if (_life > 0)
                 {
+                    // アニメーションするプレハブの生成、その間待つ処理があってもいいかも
+
                     //Time.timeScale = 0;                     // 時間を止める ボールの動きを止められればいいのでBallMoveに修正を入れて消す　復活時にアニメーションを使いたいため
                     currentBallState = BallState.NoInstanse;  // ボールのステータスを更新
                     Debug.Log("死亡");
@@ -312,17 +319,17 @@ public class GameManager : MonoBehaviour
     /// ボールを復活させる
     /// 使用するときは残機があるときのみ
     /// </summary>
-    public void ReviveBall()
-    {
-        Debug.Log("ReviveBall");
-        _deathBall = true;
-        Instantiate(_ballPrefab);       // ボールを生成
-        _ballCounter.Refresh(_life);    // 残機表示を更新
-        /*if (Input.GetButtonDown("Jump"))
-        {
-            Time.timeScale = 1;
-        }*/
-    }
+    //public void ReviveBall()
+    //{
+    //    Debug.Log("ReviveBall");
+    //    _deathBall = true;
+    //    Instantiate(_ballPrefab);       // ボールを生成
+    //    _ballCounter.Refresh(_life);    // 残機表示を更新
+    //    /*if (Input.GetButtonDown("Jump"))
+    //    {
+    //        Time.timeScale = 1;
+    //    }*/
+    //}
 
     //------Block------//
     /// <summary>
