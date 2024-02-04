@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
     int _life = 1;              // 残機数
     float _gameTimer;           // 制限時間    
 
+    float _loadTime = 0;
+
     bool _started = false;
     bool _setting = false;
     bool _deathBall = false;
@@ -97,13 +99,45 @@ public class GameManager : MonoBehaviour
                 //ResetGame();
                 Debug.Log("Title");
                 _setting = false;   // リセットのため重要！！　★名前等変更予定
+                _started = false;
                 _canControll = false;   // リフレクター操作できない
                 _canBallMove = false;   // ボール動けない
                 _stopBallMove = true;   // ボール止める
+                // ゲームオーバーテキストを非表示にする ★パネルごとやったほうが良いかも
+                if (_gameOverPanel != null)
+                {
+                    _gameOverPanel.SetActive(false);
+                }
                 // スタートボタンを押したら
 
                 break;
+
+            case GameState.StageSelect:
+                _setting = false;
+                _started = false;
+                _canControll = false;   // リフレクター操作できない
+                _canBallMove = false;   // ボール動けない
+                _stopBallMove = true;   // ボール止める
+                // ゲームオーバーテキストを非表示にする ★パネルごとやったほうが良いかも
+                if (_gameOverPanel != null)
+                {
+                    _gameOverPanel.SetActive(false);
+                }
+                break;
+
+            case GameState.Loading:
+                _setting = false;
+                _started = false;
+                _loadTime += Time.deltaTime;
+                // フェードの時間分待ってからステートをStandbyに更新
+                if (_loadTime > 2f)
+                {
+                    _loadTime = 0;
+                    currentGameState = GameState.Standby;
+                }
+                break;
             case GameState.Standby:
+                Debug.Log("Ready");
                 if (!_setting)
                 {
                     Debug.Log("set");
@@ -113,12 +147,21 @@ public class GameManager : MonoBehaviour
                     _blockCount = _stageSettingsScript.GetStageBlockCount();    // ブロックの総数
                     _life = _stageSettingsScript.GetStageLife();                // 残機
                     _gameTimer = _stageSettingsScript.GetStageTimeLimit();      // 制限時間
-                    currentGameState = _stageSettingsScript.GetSettingGameState();
+                    //currentGameState = _stageSettingsScript.GetSettingGameState();
                     _setting = true;   // リセットのため重要！！　★名前等変更予定
+                    ShowTimer(timerText);
+                    Debug.Log(_gameTimer);
                 }
+
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    _started = false;   // ボールを動かす前にポーズをした時用
+                    StopTimer();
+                }   // Pauseへ
                 Debug.Log("Lキーでスタート");
                 if (Input.GetKeyDown(KeyCode.L))
                 {
+                    _started = true;    // スタート(ボールが動き出す)
                     currentGameState = GameState.Start;
                 }
                 _canControll = true;    // リフレクター操作できる
@@ -127,13 +170,15 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.Start:
                 // ★時間の設定を書く
+                ShowTimer(timerText);
                 currentGameState = GameState.Play;
+                _started = true;
                 _canControll = true;    // リフレクター操作できる
                 _canBallMove = true;    // ボール動ける
                 _stopBallMove = false;  // ボール止めない
                 break;
             case GameState.Play:
-                _gameTimer -= Time.deltaTime;
+                _gameTimer -= Time.deltaTime;   // プレイ中のみ時間経過
                 ShowTimer(timerText);
                 /*if (!_setting)
                 {
@@ -147,6 +192,7 @@ public class GameManager : MonoBehaviour
                     _setting = true;   // リセットのため重要！！　★名前等変更予定
                 }*/
                 //StartTimer();
+                _started = true;
                 _canControll = true;    // リフレクター操作できる
                 _canBallMove = true;    // ボール動ける
                 _stopBallMove = false;  // ボール止めない
@@ -154,7 +200,6 @@ public class GameManager : MonoBehaviour
                 {
                     StopTimer();
                 }   // Pauseへ
-                _started = true;
                 break;
             case GameState.Pause:
                 // ★時間の設定を書く
@@ -165,8 +210,15 @@ public class GameManager : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.R))    // キー変更予定　orでescを設定
                 {
                     StartTimer();
-                }   // Startへ
-                _started = false;
+                }   // Standby又はStartへ　ボールを一回動かしたかによって変わる。_started = falseでStandbyへ。残機復活時も同じ。
+                break;
+
+            case GameState.GameOver:
+                _setting = false;
+                break;
+
+            case GameState.GameClear:
+                _setting = false;
                 break;
         }
 
@@ -198,10 +250,11 @@ public class GameManager : MonoBehaviour
 
             case BallState.Destroy:
                 // 残機がなければゲームオーバーを表示する
-                if (_gameOverPanel != null && _life < 1)
+                if (_gameOverPanel != null && _life < 1 && currentGameState == GameState.Play)
                 {
                     _gameOverPanel.SetActive(true);
                     _canControll = false;   // リフレクター操作できない
+                    currentGameState = GameState.GameOver;
                     Debug.Log("GameOver");
                 }
                 else if (_life > 0)
@@ -367,7 +420,16 @@ public class GameManager : MonoBehaviour
         //_canMove = true;
         //Time.timeScale = 1;
         //_gameTimer -= Time.deltaTime;   // Time.deltaTimeを変数にしたほうが良いかも ★時間の取得方法考える
-        currentGameState = GameState.Start;
+
+        //currentGameState = GameState.Start;
+        if (!_started)
+        {
+            currentGameState = GameState.Standby;
+        }
+        else
+        {
+            currentGameState = GameState.Start;
+        }
     }
 
     /// <summary>
@@ -411,13 +473,17 @@ public class GameManager : MonoBehaviour
     public enum GameState
     {
         Title,
+        StageSelect,
+        Loading,
         Standby,
         Start,
         Play,
         Pause,
-        InStage,
+        GameOver,
+        GameClear,
     }
 
+    
     /// <summary>
     /// ゲームステートを外部から変更する
     /// </summary>

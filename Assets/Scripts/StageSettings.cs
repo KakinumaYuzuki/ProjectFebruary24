@@ -17,8 +17,8 @@ public class StageSettings : MonoBehaviour
     [Tooltip("残機数")]
     [SerializeField]int _life = 3;
     // sutate変更
-    [Tooltip("最初のゲームステート")]
-    [SerializeField] GameState _settingGameState;
+    //[Tooltip("最初のゲームステート")]
+    //[SerializeField] GameState _settingGameState;
     private void Awake()
     {
         _gameManager = GameManager.Instance;
@@ -51,9 +51,9 @@ public class StageSettings : MonoBehaviour
         return _life;
     }
 
-    public GameState GetSettingGameState()
+    /*public GameState GetSettingGameState()
     {
         return _settingGameState;
-    }
+    }*/
 
 }
