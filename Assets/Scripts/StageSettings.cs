@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static GameManager;
 
 /// <summary>
 /// ステージごとの設定をするためのスクリプト
@@ -8,11 +9,16 @@ using UnityEngine;
 /// </summary>
 public class StageSettings : MonoBehaviour
 {
-    [Header("ステージ内の総ブロック数")] public int _blockCount;
-    [Header("ステージ内の時間制限")] public float _timer;
-    [Header("残機数")] public int life = 3;
     GameManager _gameManager = null;
-
+    [Tooltip("ステージ内の総ブロック数")]
+    [SerializeField]int _blockCount;
+    [Tooltip("ステージ内の時間制限")]
+    [SerializeField]float _timer;
+    [Tooltip("残機数")]
+    [SerializeField]int _life = 3;
+    // sutate変更
+    [Tooltip("最初のゲームステート")]
+    [SerializeField] GameState _settingGameState;
     private void Awake()
     {
         _gameManager = GameManager.Instance;
@@ -39,4 +45,15 @@ public class StageSettings : MonoBehaviour
     {
         return _timer;
     }
+    
+    public int GetStageLife()
+    {
+        return _life;
+    }
+
+    public GameState GetSettingGameState()
+    {
+        return _settingGameState;
+    }
+
 }

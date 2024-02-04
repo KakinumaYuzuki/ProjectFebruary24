@@ -48,6 +48,11 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
+    /*public void TimeStart()
+    {
+        Time.timeScale = 1;
+    }*/
+
     public void LoadScene()
     {
         _loading = true;
