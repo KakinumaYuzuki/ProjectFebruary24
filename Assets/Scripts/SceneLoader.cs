@@ -13,8 +13,8 @@ public class SceneLoader : MonoBehaviour
 {
     [Tooltip("ロードするシーン名")]
     [SerializeField] string _sceneName;
-    [Tooltip("画面が暗くなるまでのスピード")]
-    [SerializeField] float _fadeSpeed = 1f;
+    [Tooltip("画面が暗くなるまでのスピード 大きい方が早い")]
+    [SerializeField] float _fadeSpeed = 0.7f;
     Image _fadePanel = null; // フェード用のパネル Raycast Targetの設定をすること 
     bool _loading = false;  // ロード開始フラグ
 
@@ -39,6 +39,7 @@ public class SceneLoader : MonoBehaviour
                 {
                     SceneManager.LoadScene(_sceneName);
                     _loading = false;
+                    Debug.Log(_loading);
                 }
             }
             else

@@ -16,12 +16,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Text timerText;
     [Tooltip("スコア表示テキスト")]
     [SerializeField] public Text scoreText;    // ブロック破壊数〇/〇　フィールドにする必要ないかも
-    [Tooltip("ゲームオーバーパネル")]
-    [SerializeField] GameObject _gameOverPanel = null;
+    //[Tooltip("ゲームオーバーパネル")]
+    //[SerializeField] GameObject _gameOverPanel = null;
     
     [Header("BGM")]
     [SerializeField] public AudioSource bgmSource;  // BGMデータ
     [SerializeField] public AudioClip bgm;          // BGMの音量調整
+
+    /*[Header("ポストプロセス")]
+    [SerializeField] public GameObject uiPostProcess;       // UI用
+    [SerializeField] public GameObject inGamePostProcess;   // ステージ用*/
 
     [Header("シーン名")]
     [SerializeField] public string titleSceneName;  // タイトルシーンの名前
@@ -84,10 +88,10 @@ public class GameManager : MonoBehaviour
         //_gameTimer = _stageSettingsScript.GetStageTimeLimit();   // ステージごとの制限時間を取得
 
         // ゲームオーバーテキストを非表示にする ★パネルごとやったほうが良いかも
-        if (_gameOverPanel != null)
+        /*if (_gameOverPanel != null)
         {
             _gameOverPanel.SetActive(false);
-        }
+        }*/
         _ballCounter = GetComponent<BallCounter>();
         if (_ballCounter != null)
         {
@@ -101,35 +105,50 @@ public class GameManager : MonoBehaviour
         {
             case GameState.Title:
                 //ResetGame();
-                Debug.Log("Title");
+                //Debug.Log("Title");
+                /*if (uiPostProcess != null && inGamePostProcess != null)
+                {
+                    uiPostProcess.SetActive(true);  // ポストプロセス
+                    inGamePostProcess.SetActive(false);
+                }*/
                 _setting = false;   // リセットのため重要！！　★名前等変更予定
                 _started = false;
                 _canControll = false;   // リフレクター操作できない
                 _canBallMove = false;   // ボール動けない
                 _stopBallMove = true;   // ボール止める
                 // ゲームオーバーテキストを非表示にする ★パネルごとやったほうが良いかも
-                if (_gameOverPanel != null)
+                /*if (_gameOverPanel != null)
                 {
                     _gameOverPanel.SetActive(false);
-                }
+                }*/
                 // スタートボタンを押したら
 
                 break;
 
             case GameState.StageSelect:
+                /*if (uiPostProcess != null && inGamePostProcess != null)
+                {
+                    uiPostProcess.SetActive(true);  // ポストプロセス
+                    inGamePostProcess.SetActive(false);
+                }*/
                 _setting = false;
                 _started = false;
                 _canControll = false;   // リフレクター操作できない
                 _canBallMove = false;   // ボール動けない
                 _stopBallMove = true;   // ボール止める
                 // ゲームオーバーテキストを非表示にする ★パネルごとやったほうが良いかも
-                if (_gameOverPanel != null)
+                /*if (_gameOverPanel != null)
                 {
                     _gameOverPanel.SetActive(false);
-                }
+                }*/
                 break;
 
             case GameState.Loading:
+                /*if (uiPostProcess != null && inGamePostProcess != null)
+                {
+                    uiPostProcess.SetActive(false);  // ポストプロセス変更
+                    inGamePostProcess.SetActive(true);
+                }*/
                 _setting = false;
                 _started = false;
                 _loadTime += Time.deltaTime;
@@ -141,6 +160,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.Standby:
+                /*if (uiPostProcess != null && inGamePostProcess != null)
+                {
+                    uiPostProcess.SetActive(false);  // ポストプロセス変更
+                    inGamePostProcess.SetActive(true);
+                }*/
                 Debug.Log("Ready");
                 if (!_setting)
                 {
@@ -173,6 +197,11 @@ public class GameManager : MonoBehaviour
                 _stopBallMove = true;   // ボール止める
                 break;
             case GameState.Start:
+                /*if (uiPostProcess != null && inGamePostProcess != null)
+                {
+                    uiPostProcess.SetActive(false);  // ポストプロセス変更
+                    inGamePostProcess.SetActive(true);
+                }*/
                 // ★時間の設定を書く
                 ShowTimer(timerText);
                 currentGameState = GameState.Play;
@@ -182,6 +211,11 @@ public class GameManager : MonoBehaviour
                 _stopBallMove = false;  // ボール止めない
                 break;
             case GameState.Play:
+                /*if (uiPostProcess != null && inGamePostProcess != null)
+                {
+                    uiPostProcess.SetActive(false);  // ポストプロセス変更
+                    inGamePostProcess.SetActive(true);
+                }*/
                 _gameTimer -= Time.deltaTime;   // プレイ中のみ時間経過
                 ShowTimer(timerText);
                 /*if (!_setting)
@@ -206,6 +240,11 @@ public class GameManager : MonoBehaviour
                 }   // Pauseへ
                 break;
             case GameState.Pause:
+                /*if (uiPostProcess != null && inGamePostProcess != null)
+                {
+                    uiPostProcess.SetActive(true);  // ポストプロセス変更
+                    inGamePostProcess.SetActive(false);
+                }*/
                 // ★時間の設定を書く
                 //StopTimer();
                 _canControll = false;    // リフレクター操作できない
@@ -218,12 +257,22 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.GameOver:
-                _gameOverPanel.SetActive(true);
+                /*if (uiPostProcess != null && inGamePostProcess != null)
+                {
+                    uiPostProcess.SetActive(true);  // ポストプロセス変更
+                    inGamePostProcess.SetActive(false);
+                }*/
+                //_gameOverPanel.SetActive(true);
                 _setting = false;
                 _canControll = false;   // リフレクター操作できない
                 break;
 
             case GameState.GameClear:
+                /*if (uiPostProcess != null && inGamePostProcess != null)
+                {
+                    uiPostProcess.SetActive(true);  // ポストプロセス変更
+                    inGamePostProcess.SetActive(false);
+                }*/
                 _setting = false;
                 _canControll = false;   // リフレクター操作できない
                 break;
@@ -233,7 +282,7 @@ public class GameManager : MonoBehaviour
         switch (currentBallState)
         {
             case BallState.NoInstanse:
-                Instantiate(_ballPrefab);               // ボールを生成
+                Instantiate(_ballPrefab, new Vector3(0, 10, 10), Quaternion.identity);  // ボールを生成初期座標はどのステージもVector3(0, 10, 10)
                 currentBallState = BallState.Instanse;  // ボールのステータスを更新
                 //_ballCounter.Refresh(_life);            // 残機表示を更新
                 Debug.Log("ボールを生成 まだ諦めるな！");
@@ -257,7 +306,7 @@ public class GameManager : MonoBehaviour
 
             case BallState.Destroy:
                 // 残機がなければゲームオーバーを表示する
-                if (_gameOverPanel != null && _life < 1 && currentGameState == GameState.Play)
+                if (_life < 1 && currentGameState == GameState.Play)
                 {
                     currentGameState = GameState.GameOver;
                     Debug.Log("GameOver");
@@ -334,6 +383,7 @@ public class GameManager : MonoBehaviour
     //------Block------//
     /// <summary>
     /// 壊したブロック数のカウントを増やす
+    /// ブロックが壊れたとき外部から呼び出す
     /// </summary>
     public void AddBrokenCount()
     {

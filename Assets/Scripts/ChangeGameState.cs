@@ -35,8 +35,8 @@ public class ChangeGameState : MonoBehaviour
         _gameManager.ChangeGameState(GameState.Loading);
     }
 
-    /*public void GoToStandby()
+    public void GoToStandby()
     {
         _gameManager.ChangeGameState(GameState.Standby);
-    }*/
+    }   // ¡‚Ì‚Æ‚±‚ëLoading‚Å”»’è‚µ‚Ä‚¢‚é‚à‚Ì‚Í‚È‚¢‚©‚çƒ|[ƒY‚©‚çStandby‚É‘JˆÚ‚µ‚ÄOK
 }

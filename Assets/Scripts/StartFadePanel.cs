@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class StartFadePanel : MonoBehaviour
 {
-    [Tooltip("画面が明るくなるまでのスピード")]
-    [SerializeField] float _fadeSpeed = 0.1f;
+    [Tooltip("画面が明るくなるまでのスピード　大きい方が早い")]
+    [SerializeField] float _fadeSpeed = 0.7f;
     Image _fadePanel;
     public bool _sceneLoading = true;    // ゲームスタートはこれがfalseになったら
 
